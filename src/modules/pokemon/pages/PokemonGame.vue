@@ -3,7 +3,7 @@
   <LoadingComponent :is-loading="isLoading"></LoadingComponent>
 
   <section v-if="!isLoading && lengthPokemons >=4" class="flex flex-col justify-center items-center w-screen h-screen">
-    <h1 class="mb-4 font-bold leading-none  text-red-900 md:text-2xl lg:text-3xl ">¿Quién es este Pokémon?</h1>
+    <h1 class="mt-8 mb-2 font-bold leading-none  text-red-900 md:text-2xl lg:text-3xl ">¿Quién es este Pokémon?</h1>
 
     <div v-if="opportunities > 0" class="flex flex-col justify-center items-center w-screen h-screen">
       <div class="columns-2">

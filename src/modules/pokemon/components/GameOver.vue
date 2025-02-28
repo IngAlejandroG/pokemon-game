@@ -37,15 +37,9 @@
             <RotateCcw class="mr-2 h-4 w-4" />
             Intentar nuevamente
           </button>
-
-
         </div>
-
-
       </div>
-
     </div>
-
   </div>
 </template>
 
