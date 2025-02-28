@@ -5,6 +5,14 @@
   <section v-if="!isLoading && lengthPokemons >=4" class="flex flex-col justify-center items-center w-screen h-screen">
     <h1 class="mt-8 mb-2 font-bold leading-none  text-red-900 md:text-2xl lg:text-3xl ">¿Quién es este Pokémon?</h1>
 
+    <div  v-if="opportunities > 0" class="flex flex-col justify-center items-center w-screen">
+      <h1 class="text-4xl font-bold mb-6 text-gray-800">Timer</h1>
+      <div class="text-3xl font-mono mb-2 bg-white py-3 px-6 rounded-xl shadow-inner w-[120px] text-center">
+      {{ formatTime() }}
+    </div>
+  </div>
+
+
     <div v-if="opportunities > 0" class="flex flex-col justify-center items-center w-screen h-screen">
       <div class="columns-2">
         <h2 class="text-orange-800 font-bold mb-3">
@@ -37,6 +45,8 @@
      <GameOver :score="gameScore" :high-score="highScore" @tryAgain="resetGame"></GameOver>
     </div>
 
+
+
   </section>
 
 </template>
@@ -48,7 +58,6 @@ import PokemonPicture from '../components/PokemonPicture.vue';
 import GameOver from '../components/GameOver.vue';
 import { usePokemonGame } from '../composables/usePokemonGame';
 import { GameStatus } from '../interfaces';
-
 const {
   winnerPokemon,
   isLoading,
@@ -60,5 +69,6 @@ const {
   highScore,
   checkAnswer,
   resetGame,
+  formatTime
 } = usePokemonGame();
 </script>

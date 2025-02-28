@@ -1,4 +1,4 @@
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { GameStatus, type Pokemon, type PokemonListResponse } from '../interfaces';
 import { pokemonApi } from '../api/pokemonApi';
 
@@ -9,6 +9,10 @@ export const usePokemonGame = () => {
   const gameStatus = ref<GameStatus>(GameStatus.Playing);
   const pokemons = ref<Pokemon[]>([]);
   const pokemonOptions = ref<Pokemon[]>([]);
+
+  const seconds = ref<number>(5);
+  const isRunning = ref<boolean>(false);
+  let timerInterval:any;
 
   // Selecciona un ganador al azar de el arrglo de opciones
   const winnerPokemon = computed(
@@ -55,8 +59,35 @@ export const usePokemonGame = () => {
 
   };
 
+  const formatTime = () => {
+    const secondsAvailable = String(seconds.value).padStart(2, '0')
+    return secondsAvailable
+  }
+
+  const startTimer = () => {
+    if (isRunning.value) return
+    isRunning.value = true
+    timerInterval = setInterval(() => {
+      if(seconds.value == 0){
+        clearInterval(timerInterval);
+        checkAnswer(0)
+      }
+      if(seconds.value > 0){
+        seconds.value--;
+      }
+    }, 1000)
+  }
+
+  const resetTimer = () => {
+    seconds.value = 5;
+    isRunning.value = false;
+    clearInterval(timerInterval);
+    startTimer();
+  }
+
 
   const checkAnswer = (id: number) => {
+    clearInterval(timerInterval);
     const hasWon = winnerPokemon.value.id === id;
     if (hasWon) {
       gameStatus.value = GameStatus.Won;
@@ -73,8 +104,11 @@ export const usePokemonGame = () => {
         localStorage.setItem('highScore', highScore.value.toString());
       }
 
+
+
         setTimeout(()=>{
-          getNextRound()
+          getNextRound();
+          resetTimer();
         },2000)
 
       return;
@@ -83,6 +117,9 @@ export const usePokemonGame = () => {
     if(opportunities.value > 0){
       setTimeout(()=>{
         getNextRound()
+        seconds.value = 5;
+        isRunning.value = false;
+        startTimer();
         opportunities.value = opportunities.value - 1;
       },2000)
     }
@@ -100,6 +137,7 @@ export const usePokemonGame = () => {
     if (storedHighScore) {
       highScore.value = parseInt(storedHighScore);
     }
+
   }
 
 
@@ -111,10 +149,18 @@ export const usePokemonGame = () => {
     score.value = 0;
     opportunities.value = 3;
     await initGame();
+    resetTimer();
   };
+
+  onUnmounted(() => {
+    if (timerInterval) {
+      clearInterval(timerInterval)
+    }
+  })
 
   onMounted(async () => {
     await initGame();
+    startTimer();
   });
 
   return {
@@ -131,5 +177,6 @@ export const usePokemonGame = () => {
     getNextRound,
     checkAnswer,
     resetGame,
+    formatTime
   };
 };
